@@ -1,0 +1,19 @@
+{
+  "name": "simple-account-server",
+  "version": "1.0.0",
+  "description": "Simple account server (TypeScript+Express+MongoDB)",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+	"watch": "tsc --watch"
+  },
+  "author": "SUZUKI PLAN",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^9.4.6",
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "typescript": "^2.7.2"
+  }
+}
