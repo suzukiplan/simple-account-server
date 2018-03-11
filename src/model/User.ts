@@ -1,20 +1,20 @@
 class User {
     /**
-     * ユーザID (公開情報)
+     * ユーザID
      */
-    id: String;
+    id: string;
 
     /**
-     * ユーザ名 (公開情報)
+     * ユーザ名
      */
-    name: String; // ユーザ名（公開情報）
+    name: string;
 
     /**
-     * トークン (秘匿情報)
+     * 秘匿情報
      */
-    token?: String;
+    secret?: any;
 
-    constructor(id: string, name: String) {
+    constructor(id: string, name: string) {
         this.id = id;
         this.name = name;
     }

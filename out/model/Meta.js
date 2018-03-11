@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Meta = /** @class */ (function () {
-    function Meta(status) {
+    function Meta(status, message) {
         this.status = status;
+        this.message = message;
     }
     return Meta;
 }());
