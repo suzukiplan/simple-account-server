@@ -1,6 +1,6 @@
 # simple-account-server
 
-Node.js + TypeScript + Express + MongoDB + redis で作成したシンプルなアカウントサーバです。
+Node.js + TypeScript + Express + MongoDB で作成したシンプルなアカウントサーバです。
 これは, スマートフォンのソーシャルゲームでの利用を想定して試作してみたものです。
 
 ## How to use
