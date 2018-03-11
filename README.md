@@ -1,14 +1,38 @@
-# README
-## This the readme for your application "node-express-typescript" 
--------------------
-### Visual Studio Code has *awesome* Markdown support!
+# simple-account-server
 
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
+Node.js + TypeScript + Express + MongoDB + redis で作成したシンプルなアカウントサーバです。
+これは, スマートフォンのソーシャルゲームでの利用を想定して試作してみたものです。
 
-### For more information
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](http://daringfireball.net)
+## How to use
 
-**Enjoy!**
+### 1. Install mongoDB
+```
+brew install mongodb
+```
+
+### 2. Start mongoDB
+```
+mongod --dbfile=/path/to/db
+```
+
+### 3. Install simple-account-server
+```
+git clone https://github.com/suzukiplan/simple-account-server
+cd simple-account-server
+npm install
+```
+
+### 4. Start
+```
+npm start
+```
+
+## Settings
+
+[`.env`ファイル](.env)で各種設定ができます
+
+|name|descriptin|
+|:---:|:---|
+|MONGO_DB_URI|接続先mongoDBのURIを設定|
+|USER_ID_PREFIX|ユーザ名のプレフィックスを設定|
+
