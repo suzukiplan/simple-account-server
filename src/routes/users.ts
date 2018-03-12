@@ -33,8 +33,8 @@ users.post('/', function (req, res, next) {
 
 // ログイン（登録済みユーザーからリソースサーバへアクセスすためのセッションを取得）
 users.get('/', function (req, res, next) {
-    var id: string = req.params.id;
-    var token: string = req.params.token;
+    var id: string = req.body.id;
+    var token: string = req.body.token;
     if (!id || !token) {
         res.status(400).send({ meta: new Meta(400, "Bad request") });
         return;
