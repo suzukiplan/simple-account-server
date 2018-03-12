@@ -56,8 +56,8 @@ users.post('/login', function (req, res, next) {
                 res.status(404).send({ meta: new Meta(404, "Not found") });
                 return;
             }
-            // 古いセッションがあれば削除
-            clearSession(result.id, (err) => {
+            // 古いセッションがあれば内容をcommitしてから削除
+            commit(result.id, (err) => {
                 if (err) {
                     res.status(500).send({ meta: new Meta(500, "redis error") });
                     return;
@@ -72,7 +72,7 @@ users.post('/login', function (req, res, next) {
     });
 });
 
-function clearSession(id: string, done: (err?: Error) => void) {
+function commit(id: string, done: (err?: Error) => void) {
     redisClient.keys(id + ":*", (err, keys: string[]) => {
         if (err) {
             done(err);
