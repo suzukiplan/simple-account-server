@@ -79,7 +79,7 @@ function clearSession(id: string, done: (err?: Error) => void) {
             return;
         }
         keys.forEach(key => {
-            console.log("remove old session: " + key);
+            // TODO: commit to mongoDB
             redisClient.del(key, (err, response) => {
                 if (err) {
                     done(err);
