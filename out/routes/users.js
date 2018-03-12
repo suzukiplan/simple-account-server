@@ -24,7 +24,7 @@ users.post('/', function (req, res, next) {
             res.status(201).send({
                 meta: new Meta_1.Meta(201),
                 data: {
-                    user: JSON.stringify(newUser)
+                    user: { newUser: newUser }
                 }
             });
         });
@@ -32,8 +32,8 @@ users.post('/', function (req, res, next) {
 });
 // ログイン（登録済みユーザーからリソースサーバへアクセスすためのセッションを取得）
 users.get('/', function (req, res, next) {
-    var id = req.params.id;
-    var token = req.params.token;
+    var id = req.body.id;
+    var token = req.body.token;
     if (!id || !token) {
         res.status(400).send({ meta: new Meta_1.Meta(400, "Bad request") });
         return;
