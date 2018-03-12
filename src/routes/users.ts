@@ -4,6 +4,8 @@ import { Meta } from '../model/Meta'
 
 const uuid = require('node-uuid');
 const MongoUtil = require('../MongoUtil');
+const redis = require('redis');
+const redisClient = redis.createClient();
 const users: Router = Router();
 
 // 新規ユーザー登録
@@ -32,7 +34,7 @@ users.post('/', function (req, res, next) {
 });
 
 // ログイン（登録済みユーザーからリソースサーバへアクセスすためのセッションを取得）
-users.get('/', function (req, res, next) {
+users.post('/login', function (req, res, next) {
     var id: string = req.body.id;
     var token: string = req.body.token;
     if (!id || !token) {
@@ -54,11 +56,40 @@ users.get('/', function (req, res, next) {
                 res.status(404).send({ meta: new Meta(404, "Not found") });
                 return;
             }
-            var session = ""; // TODO: make session
-            res.send({ meta: new Meta(200), data: { session: session } });
+            // 古いセッションがあれば削除
+            clearSession(result.id, (err) => {
+                if (err) {
+                    res.status(500).send({ meta: new Meta(500, "redis error") });
+                    return;
+                }
+                // 新たなセッションを作成
+                var session = result.id + ":" + uuid.v4();
+                redisClient.set(session, JSON.stringify(result), () => {
+                    res.send({ meta: new Meta(200), data: { session: session } });
+                });
+            });
         });
     });
 });
+
+function clearSession(id: string, done: (err?: Error) => void) {
+    redisClient.keys(id + ":*", (err, keys: string[]) => {
+        if (err) {
+            done(err);
+            return;
+        }
+        keys.forEach(key => {
+            console.log("remove old session: " + key);
+            redisClient.del(key, (err, response) => {
+                if (err) {
+                    done(err);
+                    return;
+                }
+            });
+        });
+        done();
+    })
+}
 
 // ユーザー情報（公開情報）を取得
 users.get('/:id', function (req, res, next) {

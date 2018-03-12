@@ -5,6 +5,8 @@ var User_1 = require("../model/User");
 var Meta_1 = require("../model/Meta");
 var uuid = require('node-uuid');
 var MongoUtil = require('../MongoUtil');
+var redis = require('redis');
+var redisClient = redis.createClient();
 var users = express_1.Router();
 // 新規ユーザー登録
 users.post('/', function (req, res, next) {
@@ -31,7 +33,7 @@ users.post('/', function (req, res, next) {
     });
 });
 // ログイン（登録済みユーザーからリソースサーバへアクセスすためのセッションを取得）
-users.get('/', function (req, res, next) {
+users.post('/login', function (req, res, next) {
     var id = req.body.id;
     var token = req.body.token;
     if (!id || !token) {
@@ -53,11 +55,39 @@ users.get('/', function (req, res, next) {
                 res.status(404).send({ meta: new Meta_1.Meta(404, "Not found") });
                 return;
             }
-            var session = ""; // TODO: make session
-            res.send({ meta: new Meta_1.Meta(200), data: { session: session } });
+            // 古いセッションがあれば削除
+            clearSession(result.id, function (err) {
+                if (err) {
+                    res.status(500).send({ meta: new Meta_1.Meta(500, "redis error") });
+                    return;
+                }
+                // 新たなセッションを作成
+                var session = result.id + ":" + uuid.v4();
+                redisClient.set(session, JSON.stringify(result), function () {
+                    res.send({ meta: new Meta_1.Meta(200), data: { session: session } });
+                });
+            });
         });
     });
 });
+function clearSession(id, done) {
+    redisClient.keys(id + ":*", function (err, keys) {
+        if (err) {
+            done(err);
+            return;
+        }
+        keys.forEach(function (key) {
+            console.log("remove old session: " + key);
+            redisClient.del(key, function (err, response) {
+                if (err) {
+                    done(err);
+                    return;
+                }
+            });
+        });
+        done();
+    });
+}
 // ユーザー情報（公開情報）を取得
 users.get('/:id', function (req, res, next) {
     MongoUtil.connect(function (err, db) {

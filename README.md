@@ -1,7 +1,10 @@
 # simple-account-server
 
 Node.js + TypeScript + Express + MongoDB で作成したシンプルなアカウントサーバです。
+
 これは, スマートフォンのソーシャルゲームでの利用を想定して試作してみたものです。
+
+実際にコレで実用に耐えうるかは未知数ですが, なるべく実用に耐えうるスケーラブルなものにするつもりです。
 
 ## How to use
 
@@ -13,7 +16,7 @@ mongod --dbfile=/path/to/db
 ```
 
 ### 2. Install & Start redis
-MongoDB が高速とはいっても, アカウントに紐づくデータ（プレイの実績やニックネーム等）はかなりの頻度で更新されるので, 十分なパフォーマンスが得られないと想定されます。そこで, Redis (オンメモリでデータを管理できるKVS) を用います。
+アカウントの一時的なセッション情報を Redis (オンメモリDB) で保持します。
 ```
 brew install redis
 redis-server
@@ -38,7 +41,7 @@ npm start
 
 ## Tests
 
-### Register new user
+### [POST] /users - Register new user
 #### (request)
 ```
 curl -X POST http://localhost:3000/users
@@ -62,10 +65,10 @@ curl -X POST http://localhost:3000/users
 }
 ```
 
-### Login (get session)
+### [POST] /users/login (get session)
 #### (request)
 ```
-curl -X GET -H 'Content-Type:application/json' -d '{"id": "user-id", "token": "token-string"}' http://localhost:3000/users
+curl -X POST -H 'Content-Type:application/json' -d '{"id": "user-id", "token": "token-string"}' http://localhost:3000/users/login
 ```
 
 #### (response)
