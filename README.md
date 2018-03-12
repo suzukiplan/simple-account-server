@@ -6,7 +6,7 @@ Node.js + TypeScript + Express + MongoDB で作成したシンプルなアカウ
 ## How to use
 
 ### 1. Install & Start mongoDB
-アカウントの永続情報は MongoDB (NoSQL方式 の高速な DBMS) で保持します。
+アカウントの永続情報は MongoDB (NoSQL方式 の高速な DBMS) で保持します。
 ```
 brew install mongodb
 mongod --dbfile=/path/to/db
