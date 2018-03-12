@@ -52,13 +52,11 @@ curl -X POST http://localhost:3000/users
   },
   "data": {
     "user": {
-      "newUser": {
         "id": "user-id",
         "name": "user-name",
         "secret": {
-          "token": "token-string"
+            "token": "token-string"
         }
-      }
     }
   }
 }

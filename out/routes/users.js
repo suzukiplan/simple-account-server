@@ -24,7 +24,7 @@ users.post('/', function (req, res, next) {
             res.status(201).send({
                 meta: new Meta_1.Meta(201),
                 data: {
-                    user: { newUser: newUser }
+                    user: newUser
                 }
             });
         });
