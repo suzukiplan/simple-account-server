@@ -5,25 +5,25 @@ Node.js + TypeScript + Express + MongoDB で作成したシンプルなアカウ
 
 ## How to use
 
-### 1. Install mongoDB
+### 1. Install & Start mongoDB
+アカウントの永続情報は MongoDB (NoSQL方式 の高速な DBMS) で保持します。
 ```
 brew install mongodb
-```
-
-### 2. Start mongoDB
-```
 mongod --dbfile=/path/to/db
 ```
 
-### 3. Install simple-account-server
+### 2. Install & Start redis
+アカウントに紐づくデータ（プレイの実績やニックネーム等）といった高頻度に更新されるデータは、早いとはいってもファイルアクセスのある MongoDB だけで管理するのは実用に耐えられないと考えられます。そこで、redisを用います。
+```
+brew install redis
+redis-server
+```
+
+### 3. Install & Start simple-account-server
 ```
 git clone https://github.com/suzukiplan/simple-account-server
 cd simple-account-server
 npm install
-```
-
-### 4. Start
-```
 npm start
 ```
 
@@ -36,3 +36,72 @@ npm start
 |MONGO_DB_URI|接続先mongoDBのURIを設定|
 |USER_ID_PREFIX|ユーザ名のプレフィックスを設定|
 
+## Tests
+
+### Register new user
+#### (request)
+```
+curl -X POST http://localhost:3000/users
+```
+
+#### (response)
+```
+{
+  "meta": {
+    "status": 201
+  },
+  "data": {
+    "user": {
+      "newUser": {
+        "id": "user-id",
+        "name": "user-name",
+        "secret": {
+          "token": "token-string"
+        }
+      }
+    }
+  }
+}
+```
+
+### Login (get session)
+#### (request)
+```
+curl -X GET -H 'Content-Type:application/json' -d '{"id": "user-id", "token": "token-string"}' http://localhost:3000/users
+```
+
+#### (response)
+```
+{
+  "meta": {
+    "status": 200
+  },
+  "data": {
+    "session": "session-string"
+  }
+}
+```
+
+### Update user data
+TODO (not implemented)
+
+### Get other user data
+#### (request)
+```
+curl -X GET http://localhost:3000/users/:user-id
+```
+
+#### (response)
+```
+{
+  "meta": {
+    "status": 200
+  },
+  "data": {
+    "user": {
+      "id": "user-id",
+      "name": "user-name"
+    }
+  }
+}
+```
