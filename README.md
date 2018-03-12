@@ -47,18 +47,18 @@ curl -X POST http://localhost:3000/users
 #### (response)
 ```
 {
-  "meta": {
-    "status": 201
-  },
-  "data": {
-    "user": {
-        "id": "user-id",
-        "name": "user-name",
-        "secret": {
-            "token": "token-string"
+    "meta": {
+        "status": 201
+    },
+    "data": {
+        "user": {
+            "id": "user-id",
+            "name": "user-name",
+            "secret": {
+                "token": "token-string"
+            }
         }
     }
-  }
 }
 ```
 
@@ -71,12 +71,12 @@ curl -X GET -H 'Content-Type:application/json' -d '{"id": "user-id", "token": "t
 #### (response)
 ```
 {
-  "meta": {
-    "status": 200
-  },
-  "data": {
-    "session": "session-string"
-  }
+    "meta": {
+        "status": 200
+    },
+    "data": {
+        "session": "session-string"
+    }
 }
 ```
 
@@ -92,14 +92,14 @@ curl -X GET http://localhost:3000/users/:user-id
 #### (response)
 ```
 {
-  "meta": {
-    "status": 200
-  },
-  "data": {
-    "user": {
-      "id": "user-id",
-      "name": "user-name"
+    "meta": {
+        "status": 200
+    },
+    "data": {
+        "user": {
+            "id": "user-id",
+            "name": "user-name"
+        }
     }
-  }
 }
 ```
