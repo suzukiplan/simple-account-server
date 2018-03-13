@@ -92,7 +92,20 @@ curl -X POST -H 'Content-Type:application/json' -d '{"id": "user-id", "token": "
 ```
 
 ### `[PUT] /users` - 自分のユーザ情報の更新
-__TODO (not implemented)__
+##### (request)
+```
+curl -X PUT -H 'Content-Type:application/json' -d '{"session":"session-string", "name": "New user name"}' http://localhost:3000/users
+```
+
+##### (response)
+```
+{
+    "meta": {
+        "status": 200,
+        "message": "Updated"
+    }
+}
+```
 
 ### `[GET] /users/{id}` - ユーザ公開情報を取得
 ##### (request)
