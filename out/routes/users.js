@@ -55,8 +55,8 @@ users.post('/login', function (req, res, next) {
                 res.status(404).send({ meta: new Meta_1.Meta(404, "Not found") });
                 return;
             }
-            // 古いセッションがあれば削除
-            clearSession(result.id, function (err) {
+            // 古いセッションがあれば内容をcommitしてから削除
+            commit(result.id, function (err) {
                 if (err) {
                     res.status(500).send({ meta: new Meta_1.Meta(500, "redis error") });
                     return;
@@ -70,14 +70,14 @@ users.post('/login', function (req, res, next) {
         });
     });
 });
-function clearSession(id, done) {
+function commit(id, done) {
     redisClient.keys(id + ":*", function (err, keys) {
         if (err) {
             done(err);
             return;
         }
         keys.forEach(function (key) {
-            console.log("remove old session: " + key);
+            // TODO: commit to mongoDB
             redisClient.del(key, function (err, response) {
                 if (err) {
                     done(err);
@@ -90,13 +90,32 @@ function clearSession(id, done) {
 }
 // ユーザー情報（公開情報）を取得
 users.get('/:id', function (req, res, next) {
+    var id = req.params.id;
+    redisClient.keys(id + ":*", function (err, keys) {
+        if (err || keys.length < 1) {
+            readUserFromDB(id, res);
+            return;
+        }
+        redisClient.get(keys[0], function (err, result) {
+            if (err || !result) {
+                readUserFromDB(id, res);
+            }
+            else {
+                var user = JSON.parse(result);
+                user.secret = undefined;
+                res.send({ meta: new Meta_1.Meta(200), data: { user: user }, isCache: true });
+            }
+        });
+    });
+});
+function readUserFromDB(id, res) {
     MongoUtil.connect(function (err, db) {
         if (err) {
             res.status(500).send({ meta: new Meta_1.Meta(500, "DB connect err") });
             return;
         }
         var usersTable = db.collection('users');
-        usersTable.findOne({ id: req.params.id }, function (err, result) {
+        usersTable.findOne({ id: id }, function (err, result) {
             if (err) {
                 res.status(500).send({ meta: new Meta_1.Meta(500, "DB request err") });
                 return;
@@ -109,6 +128,6 @@ users.get('/:id', function (req, res, next) {
             res.send({ meta: new Meta_1.Meta(200), data: { user: result } });
         });
     });
-});
+}
 exports.default = users;
 //# sourceMappingURL=users.js.map

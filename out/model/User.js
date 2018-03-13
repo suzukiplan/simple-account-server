@@ -4,7 +4,7 @@ var User = /** @class */ (function () {
     function User(id, name) {
         this.id = id;
         this.name = name;
-        this.registerDate = Math.floor(new Date().getTime() / 1000);
+        this.registerDate = new Date().getTime();
     }
     return User;
 }());

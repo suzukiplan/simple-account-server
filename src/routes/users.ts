@@ -92,14 +92,34 @@ function commit(id: string, done: (err?: Error) => void) {
 }
 
 // ユーザー情報（公開情報）を取得
+// キャッシュ (redis) が存在する場合はキャッシュから読み, 無ければmongoDBから読む
 users.get('/:id', function (req, res, next) {
+    var id = req.params.id;
+    redisClient.keys(id + ":*", (err, keys: string[]) => {
+        if (err || keys.length < 1) {
+            readUserFromDB(id, res);
+            return;
+        }
+        redisClient.get(keys[0], (err, result) => {
+            if (err || !result) {
+                readUserFromDB(id, res);
+            } else {
+                var user = JSON.parse(result);
+                user.secret = undefined;
+                res.send({ meta: new Meta(200), data: { user: user }, isCache: true });
+            }
+        });
+    })
+});
+
+function readUserFromDB(id: string, res) {
     MongoUtil.connect((err, db) => {
         if (err) {
             res.status(500).send({ meta: new Meta(500, "DB connect err") });
             return;
         }
         var usersTable = db.collection('users');
-        usersTable.findOne({ id: req.params.id }, (err, result) => {
+        usersTable.findOne({ id: id }, (err, result) => {
             if (err) {
                 res.status(500).send({ meta: new Meta(500, "DB request err") });
                 return;
@@ -112,6 +132,6 @@ users.get('/:id', function (req, res, next) {
             res.send({ meta: new Meta(200), data: { user: result } });
         });
     });
-});
+}
 
 export default users;
