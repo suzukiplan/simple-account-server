@@ -15,11 +15,21 @@ mongod --dbfile=/path/to/db
 
 ### 2. Install & Start redis
 アカウントの一時的なセッション情報を Redis (オンメモリDB) で保持します。
-アカウント公開情報の参照時は, redis ⇒ mongoDB の順に読み込むことで, ヒット時のレスポンス速度を 1/2 程度に下げることができます。（その代わり, ヒットしなかった時の性能は mongoDB のみの場合と比較して 1.5倍 程度になります）
+アカウント公開情報の参照時は, redis ⇒ mongoDB の順に読み込むことで, ヒット時のレスポンス速度をかなり下げることができます。（その代わり, ヒットしなかった時の性能は mongoDB のみの場合と比較して 1.5倍 程度になります）
 ```
 brew install redis
 redis-server
 ```
+
+> (参考) キャッシュされたユーザ (u3) と キャッシュされていないユーザ (u4) の参照応答時間の簡単な実測値を出してみました。
+> ```
+> GET /users/u4 200 21.638 ms - 101
+> GET /users/u3 200 2.357 ms - 116
+> GET /users/u4 200 5.643 ms - 101
+> GET /users/u3 200 1.831 ms - 116
+> GET /users/u4 200 10.334 ms - 101
+> GET /users/u3 200 1.066 ms - 116
+> ```
 
 ### 3. Install & Start simple-account-server
 ```

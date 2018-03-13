@@ -2,17 +2,17 @@ class User {
     /**
      * ユーザID
      */
-    id: string;
+    id?: string;
 
     /**
      * ユーザ名
      */
-    name: string;
+    name?: string;
 
     /**
      * 登録日 (UNIX time x 1000)
      */
-    registerDate: number;
+    registerDate?: number;
 
     /**
      * 秘匿情報

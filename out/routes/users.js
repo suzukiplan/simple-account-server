@@ -89,6 +89,7 @@ function commit(id, done) {
     });
 }
 // ユーザー情報（公開情報）を取得
+// キャッシュ (redis) が存在する場合はキャッシュから読み, 無ければmongoDBから読む
 users.get('/:id', function (req, res, next) {
     var id = req.params.id;
     redisClient.keys(id + ":*", function (err, keys) {
