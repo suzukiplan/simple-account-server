@@ -38,15 +38,15 @@ npm start
 |MONGO_DB_URI|接続先mongoDBのURIを設定|
 |USER_ID_PREFIX|ユーザ名のプレフィックスを設定|
 
-## Tests
+## Specifications
 
-### [POST] /users - Register new user
-#### (request)
+### `[POST] /users` - ユーザ情報の登録
+##### (request)
 ```
 curl -X POST http://localhost:3000/users
 ```
 
-#### (response)
+##### (response)
 ```
 {
     "meta": {
@@ -64,13 +64,13 @@ curl -X POST http://localhost:3000/users
 }
 ```
 
-### [POST] /users/login (get session)
-#### (request)
+### `[POST] /users/login` - セッション取得（ログイン）
+##### (request)
 ```
 curl -X POST -H 'Content-Type:application/json' -d '{"id": "user-id", "token": "token-string"}' http://localhost:3000/users/login
 ```
 
-#### (response)
+##### (response)
 ```
 {
     "meta": {
@@ -85,13 +85,13 @@ curl -X POST -H 'Content-Type:application/json' -d '{"id": "user-id", "token": "
 ### Update user data
 TODO (not implemented)
 
-### Get other user data
-#### (request)
+### `[GET] /users/{id}` - ユーザ公開情報を取得
+##### (request)
 ```
 curl -X GET http://localhost:3000/users/:user-id
 ```
 
-#### (response)
+##### (response)
 ```
 {
     "meta": {
