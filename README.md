@@ -8,6 +8,7 @@ Node.js + TypeScript + Express + MongoDB + Redis で作成したシンプルな�
 MIT
 
 ## How to use
+以下, Mac上で動作させる手順を示します。（Linuxでもミドルのインストール手順を適宜適当に読み替えれば動く筈）
 
 ### 1. Install & Start mongoDB
 アカウントの永続情報は MongoDB (NoSQL方式 の高速な DBMS) で保持します。
