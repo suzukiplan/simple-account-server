@@ -82,8 +82,8 @@ curl -X POST -H 'Content-Type:application/json' -d '{"id": "user-id", "token": "
 }
 ```
 
-### Update user data
-TODO (not implemented)
+### `[PUT] /users` - 自分のユーザ情報の更新
+__TODO (not implemented)__
 
 ### `[GET] /users/{id}` - ユーザ公開情報を取得
 ##### (request)
