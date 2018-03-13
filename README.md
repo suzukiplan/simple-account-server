@@ -4,6 +4,9 @@ Node.js + TypeScript + Express + MongoDB + Redis で作成したシンプルな�
 これは, スマートフォンのソーシャルゲームでの利用を想定して試作してみたものです。
 実際にコレで実用に耐えうるかは未知数ですが, なるべく実用に耐えうる可用性と性能にします。
 
+## License
+MIT
+
 ## How to use
 
 ### 1. Install & Start mongoDB
