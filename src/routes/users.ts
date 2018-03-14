@@ -5,7 +5,7 @@ import { Meta } from '../model/Meta'
 const uuid = require('node-uuid');
 const MongoUtil = require('../MongoUtil');
 const redis = require('redis');
-const redisClient = redis.createClient();
+const redisClient = redis.createClient(process.env.REDIS_URI);
 const users: Router = Router();
 
 // 新規ユーザー登録
