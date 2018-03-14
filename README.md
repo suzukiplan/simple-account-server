@@ -47,10 +47,10 @@ npm start
 [`.env`ファイル](.env)で各種設定ができます
 
 |name|descriptin|
-|:---:|:---|
-|MONGO_DB_URI|接続先mongoDBのURIを設定|
-|REDIS_URI|接続先RedisのURIを設定|
-|USER_ID_PREFIX|ユーザ名のプレフィックスを設定|
+|:---|:---|
+|`MONGO_DB_URI`|接続先mongoDBのURIを設定|
+|`REDIS_URI`|接続先RedisのURIを設定|
+|`USER_ID_PREFIX`|ユーザ名のプレフィックスを設定|
 
 ## Specifications
 
