@@ -113,28 +113,28 @@ users.put('/', function (req, res, next) {
             res.send({ meta: new Meta_1.Meta(200, "Not updated") });
             return;
         }
-        // redisを更新
-        redisClient.set(req.body.session, JSON.stringify(user), function (err) {
+        // DBを更新
+        MongoUtil.connect(function (err, db) {
             if (err) {
-                res.status(500).send({ meta: new Meta_1.Meta(500, "redis error") });
+                res.status(500).send({ meta: new Meta_1.Meta(500, "DB connect err") });
                 return;
             }
-            // DBを更新
-            MongoUtil.connect(function (err, db) {
+            var usersTable = db.collection('users');
+            // TODO: 更新に対応したパラメタを増やした場合 $set に追加する
+            usersTable.updateOne({ id: user.id, secret: { token: user.secret.token } }, { $set: { "name": user.name } }, function (err, result) {
                 if (err) {
-                    res.status(500).send({ meta: new Meta_1.Meta(500, "DB connect err") });
-                    return;
+                    res.status(500).send({ meta: new Meta_1.Meta(500, "DB update err") });
                 }
-                var usersTable = db.collection('users');
-                // TODO: 更新に対応したパラメタを増やした場合 $set に追加する
-                usersTable.updateOne({ id: user.id, secret: { token: user.secret.token } }, { $set: { "name": user.name } }, function (err, result) {
-                    if (err) {
-                        res.status(500).send({ meta: new Meta_1.Meta(500, "DB update err") });
-                    }
-                    else {
+                else {
+                    // redisを更新
+                    redisClient.set(req.body.session, JSON.stringify(user), function (err) {
+                        if (err) {
+                            res.status(500).send({ meta: new Meta_1.Meta(500, "redis error") });
+                            return;
+                        }
                         res.send({ meta: new Meta_1.Meta(200, "Updated") });
-                    }
-                });
+                    });
+                }
             });
         });
     });
