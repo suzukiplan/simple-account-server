@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import { User } from '../model/User'
 import { Meta } from '../model/Meta'
+import { redisClient } from '../util/RedisUtil';
 
 const uuid = require('node-uuid');
-const MongoUtil = require('../MongoUtil');
-const redis = require('redis');
-const redisClient = redis.createClient(process.env.REDIS_URI);
+const MongoUtil = require('../util/MongoUtil');
+const UserUtil = require('../util/UserUtil');
 const users: Router = Router();
 
 // 新規ユーザー登録
@@ -18,7 +18,7 @@ users.post('/', function (req, res, next) {
         var countersTable = db.collection('counters');
         var usersTable = db.collection('users');
         countersTable.findAndModify({ name: "user_id" }, [], { $inc: { seq: 1 } }, { new: true }, (err, ret) => {
-            var newUser = new User(process.env.USER_ID_PREFIX + ret.value.seq, "No name");
+            var newUser = new User(process.env.USER_ID_PREFIX + ret.value.seq, process.env.DEFAULT_USER_NAME);
             newUser.secret = {
                 token: uuid.v4()
             };
@@ -67,7 +67,10 @@ users.post('/login', function (req, res, next) {
                 // 新たなセッションを作成
                 var session = result.id + ":" + uuid.v4();
                 redisClient.set(session, JSON.stringify(result), () => {
-                    res.send({ meta: new Meta(200), data: { session: session } });
+                    res.cookie("session", session).send({
+                        meta: new Meta(200),
+                        data: { session: session }
+                    });
                 });
             });
         });
@@ -94,7 +97,7 @@ function deleteOldCache(id: string, done: (err?: Error) => void) {
 
 // ユーザー情報を更新
 users.put('/', (req, res, next) => {
-    redisClient.get(req.body.session, (err, result) => {
+    redisClient.get(req.cookies.session, (err, result) => {
         if (err) {
             res.status(500).send({ meta: new Meta(500, "redis error") });
             return;
@@ -119,32 +122,13 @@ users.put('/', (req, res, next) => {
             return;
         }
 
-        // DBを更新
-        MongoUtil.connect((err, db) => {
+        // ユーザ情報を更新
+        UserUtil.update(user, req.body.session, (err) => {
             if (err) {
                 res.status(500).send({ meta: new Meta(500, "DB connect err") });
-                return;
+            } else {
+                res.send({ meta: new Meta(200, "Updated") });
             }
-            var usersTable = db.collection('users');
-            // TODO: 更新に対応したパラメタを増やした場合 $set に追加する
-            usersTable.updateOne(
-                { id: user.id, secret: { token: user.secret.token } },
-                { $set: { "name": user.name } },
-                (err, result) => {
-                    if (err) {
-                        res.status(500).send({ meta: new Meta(500, "DB update err") });
-                    } else {
-                        // redisを更新
-                        redisClient.set(req.body.session, JSON.stringify(user), (err) => {
-                            if (err) {
-                                res.status(500).send({ meta: new Meta(500, "redis error") });
-                                return;
-                            }
-                            res.send({ meta: new Meta(200, "Updated") });
-                        });
-                    }
-                }
-            );
         });
     });
 });
